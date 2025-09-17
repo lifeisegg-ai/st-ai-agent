@@ -15,7 +15,9 @@ from mylib.variable import FILE_TYPES, create_input_image
 if "clone_chatGPT" not in st.session_state:
     st.switch_page("pages/preference.py")
 
-client = OpenAI(api_key=st.session_state.clone_chatGPT["key_openai_api"])
+client = OpenAI(
+    api_key=st.session_state.clone_chatGPT["key_openai_api"],
+)
 VECTOR_STORE_ID = st.session_state.clone_chatGPT["key_vector_store_id"]
 # mylib/agent.py
 agent = set_agent(VECTOR_STORE_ID)
