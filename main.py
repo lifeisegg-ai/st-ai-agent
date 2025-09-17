@@ -1,10 +1,6 @@
 import asyncio
 import base64
-import os
 
-import dotenv
-
-dotenv.load_dotenv()
 import streamlit as st
 from agents import Runner
 from openai import OpenAI
@@ -12,21 +8,26 @@ from openai import OpenAI
 from mylib.agent import set_agent
 from mylib.fnc import update_status
 from mylib.history import paint_history
-from mylib.session import set_session
+from mylib.session import set_memory_session
 from mylib.sidebar import display_sidebar
 from mylib.variable import FILE_TYPES, create_input_image
 
-client = OpenAI()
+if "clone_chatGPT" not in st.session_state:
+    st.switch_page("pages/preference.py")
 
-VECTOR_STORE_ID = os.environ.get("VECTOR_STORE_ID")
-
+client = OpenAI(api_key=st.session_state.clone_chatGPT["key_openai_api"])
+VECTOR_STORE_ID = st.session_state.clone_chatGPT["key_vector_store_id"]
 # mylib/agent.py
 agent = set_agent(VECTOR_STORE_ID)
 # mylib/session.py
-session = set_session()
+session = set_memory_session("chat-history", "chat-gpt-clone-memory.db")
 
 # mylib/history.py
-asyncio.run(paint_history(set_session()))
+asyncio.run(
+    paint_history(
+        set_memory_session("chat-history", "chat-gpt-clone-memory.db")
+    )
+)
 
 # mylib/fnc.py
 # update_status(status_container, event):
